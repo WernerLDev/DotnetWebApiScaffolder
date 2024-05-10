@@ -1,0 +1,18 @@
+using Microsoft.OData.ModelBuilder;
+using ##PROJECTNAME##.Models;
+
+namespace ##PROJECTNAME##.Data;
+
+public class OdataModel
+{
+
+  public static ODataConventionModelBuilder BuildOdataModel()
+  {
+    var modelBuilder = new ODataConventionModelBuilder();
+
+##ENTITY_SETS##
+
+    return modelBuilder;
+  }
+
+}

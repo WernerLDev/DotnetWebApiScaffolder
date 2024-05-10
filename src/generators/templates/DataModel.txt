@@ -1,0 +1,13 @@
+using System.ComponentModel.DataAnnotations.Schema;
+  
+namespace ##PROJECTNAME##.Models;
+
+public class ##ENTITY_NAME##
+{
+  public int Id { get; set; }
+  
+##MODEL_FIELDS##
+
+  public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+  public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+}

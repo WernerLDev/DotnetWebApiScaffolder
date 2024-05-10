@@ -1,0 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using ##PROJECTNAME##.Models;
+
+namespace ##PROJECTNAME##.Data;
+
+public class ##DBCONTEXT_NAME## : DbContext
+{
+  public ##DBCONTEXT_NAME## (DbContextOptions <##DBCONTEXT_NAME##> options)
+          : base(options)
+    { }
+
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+  // Todo add relations here
+  /*
+  modelBuilder.Entity<Blog>()
+    .HasMany(e => e.Posts)
+    .WithOne(e => e.Blog)
+    .HasForeignKey(e => e.BlogId)
+    .HasPrincipalKey(e => e.Id);
+    */
+}
+
+##DB_SETS##
+}

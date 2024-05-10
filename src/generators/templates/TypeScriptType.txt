@@ -1,0 +1,6 @@
+export type ##ENTITY_NAME## = {
+  Id: Number;
+  CreatedAt: string;
+  UpdatedAt: string;
+##ENTITY_COLUMNS##
+}

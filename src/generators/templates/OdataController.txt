@@ -1,0 +1,63 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Formatter;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Results;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using ##PROJECTNAME##.Data;
+using ##PROJECTNAME##.Models;
+using ##PROJECTNAME##.Models.Dtos;
+
+namespace ##PROJECTNAME##.Controllers.Api;
+
+[Route("/odata/##ENTITY_NAME##")]
+public class ##ENTITY_NAME##Controller : ODataController
+{
+
+  private readonly ##DBCONTEXT_NAME## _dbContext;
+  private readonly ##ENTITY_NAME##Repository _repo;
+
+  public ##ENTITY_NAME##Controller(##DBCONTEXT_NAME## dbContext, ##ENTITY_NAME##Repository repo)
+  {
+    _dbContext = dbContext;
+    _repo = repo;
+  }
+
+  [EnableQuery]
+  public ActionResult<IEnumerable<##ENTITY_NAME##>> Get()
+  {
+    return Ok(_dbContext.##ENTITY_NAME_PLURAL##);
+  }
+
+  public ActionResult<##ENTITY_NAME##> Get##ENTITY_NAME##([FromODataUri] int key)
+  {
+    return _dbContext.##ENTITY_NAME_PLURAL##.Single(x => x.Id == key);
+  }
+
+  [HttpPost]
+  public async Task<ActionResult<##ENTITY_NAME##>> Create([FromBody] ##ENTITY_NAME##Dto entity)
+  {
+    return Ok(await _repo.Create(entity));
+  }
+
+  [HttpPut("{id}")]
+  public async Task<ActionResult<##ENTITY_NAME##>> Update([FromBody] ##ENTITY_NAME##Dto entity, [FromRoute] int id)
+  {
+    try {
+      return Ok(await _repo.Update(entity, id));
+    } catch(Exception e) {
+      return BadRequest(e.Message);
+    }
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete([FromRoute] int id)
+  {
+    try {
+      await _repo.Delete(id);
+      return Ok();
+    } catch(Exception e) {
+      return BadRequest(e.Message);
+    }
+  }
+
+}

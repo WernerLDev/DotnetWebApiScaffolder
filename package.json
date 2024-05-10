@@ -1,0 +1,23 @@
+{
+  "name": "ts-scaffolder",
+  "version": "1.0.0",
+  "description": "Tool to scaffold boilerplate for C# and TS projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "C#",
+    "TypeScript",
+    "Scaffolder"
+  ],
+  "author": "Werner Langenhuisen",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/pluralize": "^0.0.33",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "pluralize": "^8.0.0"
+  }
+}
