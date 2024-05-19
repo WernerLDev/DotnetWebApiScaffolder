@@ -1,10 +1,10 @@
-import { Column, Entity, AppContext } from "../../types";
+import { Column, Entity, AppContext } from "../../../types";
 import {
   EntitySubstitutions,
   GenerateCode,
   ContextSubstitutions,
   WriteCodeToFile,
-} from "../../utils";
+} from "../../../utils";
 
 const GenCreate = (column: Column) => {
   return `    ${column.name} = dto.${column.name},`;
@@ -20,7 +20,7 @@ export const RepositoryGenerator = async (
 ) => {
   entities.forEach(async (entity) => {
     const output = await GenerateCode({
-      template: `${__dirname}/templates/Repository.txt`,
+      template: `${__dirname}/Repository.txt`,
       substitutions: new Map([
         ["FIELDS", entity.columns.map((c) => GenCreate(c)).join("\n")],
         ["UPDATE_FIELDS", entity.columns.map((c) => GenUpdate(c)).join("\n")],

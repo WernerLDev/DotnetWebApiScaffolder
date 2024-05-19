@@ -1,10 +1,10 @@
-import { Entity, AppContext } from "../../types";
+import { Entity, AppContext } from "../../../types";
 import {
   EntitySubstitutions,
   GenerateCode,
   ContextSubstitutions,
   WriteCodeToFile,
-} from "../../utils";
+} from "../../../utils";
 
 export const OdataGenerator = (entities: Entity[], context: AppContext) => {
   entities.forEach(async (entity) => {
@@ -13,7 +13,7 @@ export const OdataGenerator = (entities: Entity[], context: AppContext) => {
       .join("\n");
 
     const code = await GenerateCode({
-      template: `${__dirname}/templates/OdataController.txt`,
+      template: `${__dirname}/OdataController.txt`,
       substitutions: new Map([
         ["ENTITY_UPDATE", updates],
         ...EntitySubstitutions(entity),

@@ -1,12 +1,6 @@
 import pluralize from "pluralize";
-import { Column, Entity, AppContext } from "../../types";
-import {
-  CSharpTypesMap,
-  EntitySubstitutions,
-  GenerateCode,
-  ContextSubstitutions,
-  WriteCodeToFile,
-} from "../../utils";
+import { AppContext, Column, Entity } from "../../../types";
+import { CSharpTypesMap } from "../../../utils";
 
 export const GenModelProperty = (column: Column) => {
   if (column.type === "string") {
@@ -48,21 +42,26 @@ const GenRelations = (entity: Entity, entities: Entity[]) => {
   return relations.join("\n");
 };
 
-export const ModelsGenerator = async (
-  entities: Entity[],
+export const DataModelCode = (
+  entity: Entity,
+  allEntities: Entity[],
   context: AppContext
 ) => {
-  entities.forEach(async (entity) => {
-    const fields = entity.columns.map((c) => GenModelProperty(c)).join("\n");
-    const output = await GenerateCode({
-      template: `${__dirname}/templates/DataModel.txt`,
-      substitutions: new Map([
-        ["MODEL_FIELDS", fields.concat(`\n${GenRelations(entity, entities)}`)],
-        ...EntitySubstitutions(entity),
-        ...ContextSubstitutions(context),
-      ]),
-    });
+  return `
+using System.ComponentModel.DataAnnotations.Schema;
+  
+namespace ${context.projectName}.Models;
 
-    WriteCodeToFile(`Models/Entities/${entity.name}.cs`, output, context);
-  });
+public class ${entity.name}
+{
+  public int Id { get; set; }
+  
+${entity.columns.map((e) => GenModelProperty(e)).join("\n")}
+${GenRelations(entity, allEntities)}
+
+  public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+  public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+}
+
+`;
 };

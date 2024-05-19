@@ -1,9 +1,9 @@
-import { Entity, AppContext } from "../../types";
+import { Entity, AppContext } from "../../../types";
 import {
   GenerateCode,
   ContextSubstitutions,
   WriteCodeToFile,
-} from "../../utils";
+} from "../../../utils";
 
 export const ServiceExtensionGenerator = async (
   entities: Entity[],
@@ -16,7 +16,7 @@ export const ServiceExtensionGenerator = async (
     .join("\n");
 
   const code = await GenerateCode({
-    template: `${__dirname}/templates/ServiceExtension.txt`,
+    template: `${__dirname}/ServiceExtension.txt`,
     substitutions: new Map([
       ["REPOSITORIES", Repositories],
       ...ContextSubstitutions(context),
