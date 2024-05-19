@@ -39,15 +39,10 @@ const testProject: TsScaffolder = new TsScaffolder({
   projectName: "TestApi",
 });
 
+AddOdataApi(testProject);
+AddTypeScript(testProject);
+
 testProject
-  .addGenerator(OdataGenerator)
-  .addGenerator(ModelsGenerator)
-  .addGenerator(DbContextGenerator)
-  .addGenerator(TypeScriptTypesGenerator)
-  .addGenerator(OdataModelBuilderGenerator)
-  .addGenerator(DtosGenerator)
-  .addGenerator(RepositoryGenerator)
-  .addGenerator(ServiceExtensionGenerator)
   .addEntity({
     name: "Test",
     columns: [{ name: "Name", type: "string" }],
@@ -75,5 +70,5 @@ npx ts-node testProject.ts
 If you want to create your own generator you can simply implement a function with the following signature:
 
 ```TypeScript
-type Generator = (entities: Entity[], metaData: ProjectMeta) => void;
+type Generator = (entities: Entity[], context: AppContext) => void;
 ```
