@@ -2,6 +2,9 @@ import pluralize from "pluralize";
 import { AppContext, Column, Entity } from "../../../types";
 import { CSharpTypesMap } from "../../../utils";
 
+/*
+ * Class property for a single entity column
+ */
 export const GenModelProperty = (column: Column) => {
   if (column.type === "string") {
     return `  public string ${column.name} { get; set; } = "";`;
@@ -11,7 +14,10 @@ export const GenModelProperty = (column: Column) => {
   } { get; set; }`;
 };
 
-const GenRelations = (entity: Entity, entities: Entity[]) => {
+/*
+ *  Generate a EntityId and reference for defined relations
+ */
+const GenRelations = (entity: Entity) => {
   let relations: string[] = [];
 
   entity.relations?.forEach((relation) => {
@@ -27,6 +33,15 @@ const GenRelations = (entity: Entity, entities: Entity[]) => {
     }
   });
 
+  return relations;
+};
+
+/*
+ *  Generates a reference to entities that defined a relation to this entity
+ */
+const GenReverseRelations = (entity: Entity, entities: Entity[]) => {
+  const relations: string[] = [];
+
   entities.forEach((otherEntity) => {
     if (otherEntity.name !== entity.name) {
       otherEntity.relations?.forEach((relation) => {
@@ -39,7 +54,7 @@ const GenRelations = (entity: Entity, entities: Entity[]) => {
     }
   });
 
-  return relations.join("\n");
+  return relations;
 };
 
 export const DataModelCode = (
@@ -57,7 +72,8 @@ public class ${entity.name}
   public int Id { get; set; }
   
 ${entity.columns.map((e) => GenModelProperty(e)).join("\n")}
-${GenRelations(entity, allEntities)}
+${GenRelations(entity).join("\n")}
+${GenReverseRelations(entity, allEntities).join("\n")}
 
   public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
   public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
