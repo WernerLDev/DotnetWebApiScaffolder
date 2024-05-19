@@ -1,9 +1,13 @@
-import { Entity, ProjectMeta } from "../types";
-import { GenerateCode, MetaSubstitutions, WriteCodeToFile } from "../utils";
+import { Entity, AppContext } from "../../types";
+import {
+  GenerateCode,
+  ContextSubstitutions,
+  WriteCodeToFile,
+} from "../../utils";
 
 export const ServiceExtensionGenerator = async (
   entities: Entity[],
-  meta: ProjectMeta
+  context: AppContext
 ) => {
   const Repositories = entities
     .map((entity) => {
@@ -15,9 +19,13 @@ export const ServiceExtensionGenerator = async (
     template: `${__dirname}/templates/ServiceExtension.txt`,
     substitutions: new Map([
       ["REPOSITORIES", Repositories],
-      ...MetaSubstitutions(meta),
+      ...ContextSubstitutions(context),
     ]),
   });
 
-  WriteCodeToFile(`Extensions/${meta.projectName}Extension.cs`, code, meta);
+  WriteCodeToFile(
+    `Extensions/${context.projectName}Extension.cs`,
+    code,
+    context
+  );
 };

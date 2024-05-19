@@ -1,12 +1,12 @@
 import pluralize from "pluralize";
-import { Column, Entity, ProjectMeta } from "../types";
+import { Column, Entity, AppContext } from "../../types";
 import {
   CSharpTypesMap,
   EntitySubstitutions,
   GenerateCode,
-  MetaSubstitutions,
+  ContextSubstitutions,
   WriteCodeToFile,
-} from "../utils";
+} from "../../utils";
 
 export const GenModelProperty = (column: Column) => {
   if (column.type === "string") {
@@ -50,7 +50,7 @@ const GenRelations = (entity: Entity, entities: Entity[]) => {
 
 export const ModelsGenerator = async (
   entities: Entity[],
-  meta: ProjectMeta
+  context: AppContext
 ) => {
   entities.forEach(async (entity) => {
     const fields = entity.columns.map((c) => GenModelProperty(c)).join("\n");
@@ -59,10 +59,10 @@ export const ModelsGenerator = async (
       substitutions: new Map([
         ["MODEL_FIELDS", fields.concat(`\n${GenRelations(entity, entities)}`)],
         ...EntitySubstitutions(entity),
-        ...MetaSubstitutions(meta),
+        ...ContextSubstitutions(context),
       ]),
     });
 
-    WriteCodeToFile(`Models/Entities/${entity.name}.cs`, output, meta);
+    WriteCodeToFile(`Models/Entities/${entity.name}.cs`, output, context);
   });
 };

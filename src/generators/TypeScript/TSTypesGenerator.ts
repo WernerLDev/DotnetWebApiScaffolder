@@ -1,14 +1,14 @@
-import { Entity, ProjectMeta } from "../types";
+import { Entity, AppContext } from "../../types";
 import {
   EntitySubstitutions,
   GenerateCode,
   TypeScriptTypesMap,
   WriteCodeToFile,
-} from "../utils";
+} from "../../utils";
 
 export const TypeScriptTypesGenerator = async (
   entities: Entity[],
-  meta: ProjectMeta
+  context: AppContext
 ) => {
   const generated = entities.map((entity) => {
     const properties = entity.columns
@@ -25,5 +25,5 @@ export const TypeScriptTypesGenerator = async (
   });
 
   const output = (await Promise.all(generated)).join("\n");
-  WriteCodeToFile("Frontend/Types.ts", output, meta);
+  WriteCodeToFile("Frontend/Types.ts", output, context);
 };

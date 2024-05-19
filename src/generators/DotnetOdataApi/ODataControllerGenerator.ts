@@ -1,12 +1,12 @@
-import { Entity, ProjectMeta } from "../types";
+import { Entity, AppContext } from "../../types";
 import {
   EntitySubstitutions,
   GenerateCode,
-  MetaSubstitutions,
+  ContextSubstitutions,
   WriteCodeToFile,
-} from "../utils";
+} from "../../utils";
 
-export const OdataGenerator = (entities: Entity[], meta: ProjectMeta) => {
+export const OdataGenerator = (entities: Entity[], context: AppContext) => {
   entities.forEach(async (entity) => {
     const updates = entity.columns
       .map((c) => `    dbEntity.${c.name} = entity.${c.name};`)
@@ -17,10 +17,14 @@ export const OdataGenerator = (entities: Entity[], meta: ProjectMeta) => {
       substitutions: new Map([
         ["ENTITY_UPDATE", updates],
         ...EntitySubstitutions(entity),
-        ...MetaSubstitutions(meta),
+        ...ContextSubstitutions(context),
       ]),
     });
 
-    WriteCodeToFile(`Controllers/Api/${entity.name}Controller.cs`, code, meta);
+    WriteCodeToFile(
+      `Controllers/Api/${entity.name}Controller.cs`,
+      code,
+      context
+    );
   });
 };

@@ -1,12 +1,12 @@
-import { CodeGenerator, Entity, ProjectMeta, Scaffolder } from "./types";
+import { CodeGenerator, Entity, AppContext, Scaffolder } from "./types";
 
 export class TsScaffolder implements Scaffolder {
-  private metaData: ProjectMeta;
+  private context: AppContext;
   private generators: CodeGenerator[] = [];
   private entities: Entity[] = [];
 
-  constructor(meta?: ProjectMeta) {
-    this.metaData = meta ?? {
+  constructor(context?: AppContext) {
+    this.context = context ?? {
       basePath: "./",
       dbContextName: "AppDbContext",
       projectName: "TestProject",
@@ -25,7 +25,7 @@ export class TsScaffolder implements Scaffolder {
   public generate() {
     this.processRelations();
     this.generators.forEach((generator) => {
-      generator(this.entities, this.metaData);
+      generator(this.entities, this.context);
     });
   }
 

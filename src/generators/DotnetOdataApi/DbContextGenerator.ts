@@ -1,6 +1,10 @@
 import pluralize from "pluralize";
-import { Entity, ProjectMeta } from "../types";
-import { GenerateCode, MetaSubstitutions, WriteCodeToFile } from "../utils";
+import { Entity, AppContext } from "../../types";
+import {
+  GenerateCode,
+  ContextSubstitutions,
+  WriteCodeToFile,
+} from "../../utils";
 
 const GenDbSet = (entity: Entity) => {
   const plural = pluralize(entity.name);
@@ -9,15 +13,15 @@ const GenDbSet = (entity: Entity) => {
 
 export const DbContextGenerator = async (
   entity: Entity[],
-  meta: ProjectMeta
+  context: AppContext
 ) => {
   const code = await GenerateCode({
     template: `${__dirname}/templates/DBContext.txt`,
     substitutions: new Map([
       ["DB_SETS", entity.map((e) => GenDbSet(e)).join("\n")],
-      ...MetaSubstitutions(meta),
+      ...ContextSubstitutions(context),
     ]),
   });
 
-  WriteCodeToFile(`Data/${meta.dbContextName}.cs`, code, meta);
+  WriteCodeToFile(`Data/${context.dbContextName}.cs`, code, context);
 };

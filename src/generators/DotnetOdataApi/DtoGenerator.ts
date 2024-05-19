@@ -1,14 +1,16 @@
-import { Column, Entity, ProjectMeta } from "../types";
+import { Entity, AppContext } from "../../types";
 import {
-  CSharpTypesMap,
   EntitySubstitutions,
   GenerateCode,
-  MetaSubstitutions,
+  ContextSubstitutions,
   WriteCodeToFile,
-} from "../utils";
+} from "../../utils";
 import { GenModelProperty } from "./ModelsGenerator";
 
-export const DtosGenerator = async (entities: Entity[], meta: ProjectMeta) => {
+export const DtosGenerator = async (
+  entities: Entity[],
+  context: AppContext
+) => {
   entities.forEach(async (entity) => {
     const fields = entity.columns.map((c) => GenModelProperty(c)).join("\n");
     const output = await GenerateCode({
@@ -16,10 +18,10 @@ export const DtosGenerator = async (entities: Entity[], meta: ProjectMeta) => {
       substitutions: new Map([
         ["MODEL_FIELDS", fields],
         ...EntitySubstitutions(entity),
-        ...MetaSubstitutions(meta),
+        ...ContextSubstitutions(context),
       ]),
     });
 
-    WriteCodeToFile(`Models/Dtos/${entity.name}Dto.cs`, output, meta);
+    WriteCodeToFile(`Models/Dtos/${entity.name}Dto.cs`, output, context);
   });
 };

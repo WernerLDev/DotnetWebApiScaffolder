@@ -1,5 +1,5 @@
 import pluralize from "pluralize";
-import { Column, ColumnTypes, Entity, ProjectMeta } from "./types";
+import { ColumnTypes, Entity, AppContext } from "./types";
 import * as fs from "fs";
 
 export const CSharpTypesMap: Map<ColumnTypes, string> = new Map([
@@ -25,7 +25,7 @@ export const EntitySubstitutions = (entity: Entity): [string, string][] => {
   ];
 };
 
-export const MetaSubstitutions = (meta: ProjectMeta): [string, string][] => {
+export const ContextSubstitutions = (meta: AppContext): [string, string][] => {
   return [
     ["PROJECTNAME", meta.projectName],
     ["DBCONTEXT_NAME", meta.dbContextName],
@@ -55,10 +55,10 @@ export const GenerateCode = (params: {
 export const WriteCodeToFile = (
   path: string,
   content: string,
-  metaData: ProjectMeta
+  context: AppContext
 ) => {
   fs.writeFile(
-    `${metaData.basePath}/${metaData.projectName}/${path}`,
+    `${context.basePath}/${context.projectName}/${path}`,
     content,
     (error) => {
       if (error) {

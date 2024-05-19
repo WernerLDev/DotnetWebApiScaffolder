@@ -1,4 +1,4 @@
-export type ProjectMeta = {
+export type AppContext = {
   projectName: string;
   dbContextName: string;
   basePath: string;
@@ -25,7 +25,7 @@ export type Entity = {
   }[];
 };
 
-export type CodeGenerator = (entities: Entity[], metaData: ProjectMeta) => void;
+export type CodeGenerator = (entities: Entity[], metaData: AppContext) => void;
 
 export interface Scaffolder {
   addGenerator: (_: CodeGenerator) => Scaffolder;

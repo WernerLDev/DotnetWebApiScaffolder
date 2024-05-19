@@ -1,10 +1,10 @@
-import { Column, Entity, ProjectMeta } from "../types";
+import { Column, Entity, AppContext } from "../../types";
 import {
   EntitySubstitutions,
   GenerateCode,
-  MetaSubstitutions,
+  ContextSubstitutions,
   WriteCodeToFile,
-} from "../utils";
+} from "../../utils";
 
 const GenCreate = (column: Column) => {
   return `    ${column.name} = dto.${column.name},`;
@@ -16,7 +16,7 @@ const GenUpdate = (column: Column) => {
 
 export const RepositoryGenerator = async (
   entities: Entity[],
-  meta: ProjectMeta
+  context: AppContext
 ) => {
   entities.forEach(async (entity) => {
     const output = await GenerateCode({
@@ -25,14 +25,14 @@ export const RepositoryGenerator = async (
         ["FIELDS", entity.columns.map((c) => GenCreate(c)).join("\n")],
         ["UPDATE_FIELDS", entity.columns.map((c) => GenUpdate(c)).join("\n")],
         ...EntitySubstitutions(entity),
-        ...MetaSubstitutions(meta),
+        ...ContextSubstitutions(context),
       ]),
     });
 
     WriteCodeToFile(
       `Data/Repositories/${entity.name}Repository.cs`,
       output,
-      meta
+      context
     );
   });
 };
