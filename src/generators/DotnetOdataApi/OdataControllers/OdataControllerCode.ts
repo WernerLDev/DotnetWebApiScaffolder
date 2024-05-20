@@ -1,9 +1,6 @@
-import pluralize from "pluralize";
 import { AppContext, Entity } from "../../../types";
 
 export const OdataControllerCode = (entity: Entity, context: AppContext) => {
-  const plural = pluralize(entity.name);
-
   return `
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -32,12 +29,12 @@ public class ${entity.name}Controller : ODataController
   [EnableQuery]
   public ActionResult<IEnumerable<${entity.name}>> Get()
   {
-    return Ok(_dbContext.${plural});
+    return Ok(_dbContext.${entity.plural});
   }
 
   public ActionResult<${entity.name}> Get${entity.name}([FromODataUri] int key)
   {
-    return _dbContext.${plural}.Single(x => x.Id == key);
+    return _dbContext.${entity.plural}.Single(x => x.Id == key);
   }
 
   [HttpPost]

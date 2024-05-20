@@ -18,6 +18,7 @@ export type Column = {
 
 export type Entity = {
   name: string;
+  plural: string;
   columns: Column[];
   relations?: {
     target: string;
@@ -25,10 +26,12 @@ export type Entity = {
   }[];
 };
 
+export type EntityWithoutPlural = Omit<Entity, "plural">;
+
 export type CodeGenerator = (entities: Entity[], metaData: AppContext) => void;
 
 export interface Scaffolder {
   addGenerator: (_: CodeGenerator) => Scaffolder;
-  addEntity: (_: Entity) => Scaffolder;
+  addEntity: (_: EntityWithoutPlural) => Scaffolder;
   generate: () => void;
 }

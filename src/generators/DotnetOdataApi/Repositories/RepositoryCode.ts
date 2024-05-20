@@ -1,9 +1,6 @@
-import pluralize from "pluralize";
 import { AppContext, Entity } from "../../../types";
 
 export const RepositoryCode = (entity: Entity, context: AppContext) => {
-  const plural = pluralize(entity.name);
-
   return `
   using ${context.projectName}.Data;
   using ${context.projectName}.Models;
@@ -30,7 +27,7 @@ export const RepositoryCode = (entity: Entity, context: AppContext) => {
     .join("\n")}
       };
   
-      _dbContext.${plural}.Add(entity);
+      _dbContext.${entity.plural}.Add(entity);
       await _dbContext.SaveChangesAsync();
   
       return entity;
@@ -38,7 +35,9 @@ export const RepositoryCode = (entity: Entity, context: AppContext) => {
   
     public async Task<${entity.name}> Update(${entity.name}Dto dto, int id)
     {
-      var dbEntity = _dbContext.${plural}.SingleOrDefault(x => x.Id == id);
+      var dbEntity = _dbContext.${
+        entity.plural
+      }.SingleOrDefault(x => x.Id == id);
       if (dbEntity == null)
       {
         throw new Exception($"No ${entity.name} found with ID {id}");
@@ -49,7 +48,7 @@ export const RepositoryCode = (entity: Entity, context: AppContext) => {
     .map((column) => `    dbEntity.${column.name} = dto.${column.name};`)
     .join("\n")}
   
-      _dbContext.${plural}.Update(dbEntity);
+      _dbContext.${entity.plural}.Update(dbEntity);
       await _dbContext.SaveChangesAsync();
   
       return dbEntity;
@@ -57,13 +56,13 @@ export const RepositoryCode = (entity: Entity, context: AppContext) => {
   
     public async Task Delete(int id)
     {
-      var p = _dbContext.${plural}.SingleOrDefault(x => x.Id == id);
+      var p = _dbContext.${entity.plural}.SingleOrDefault(x => x.Id == id);
       if (p == null)
       {
         throw new Exception($"No ${entity.name} found with ID {id}");
       }
   
-      _dbContext.${plural}.Remove(p);
+      _dbContext.${entity.plural}.Remove(p);
       await _dbContext.SaveChangesAsync();
     }
   

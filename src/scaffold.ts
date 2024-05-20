@@ -1,4 +1,11 @@
-import { CodeGenerator, Entity, AppContext, Scaffolder } from "./types";
+import pluralize from "pluralize";
+import {
+  CodeGenerator,
+  Entity,
+  AppContext,
+  Scaffolder,
+  EntityWithoutPlural,
+} from "./types";
 
 export class TsScaffolder implements Scaffolder {
   private generators: CodeGenerator[] = [];
@@ -11,8 +18,8 @@ export class TsScaffolder implements Scaffolder {
     return this;
   }
 
-  public addEntity(entity: Entity) {
-    this.entities.push(entity);
+  public addEntity(entity: EntityWithoutPlural) {
+    this.entities.push({ ...entity, plural: pluralize(entity.name) });
     return this;
   }
   public generate() {

@@ -1,4 +1,3 @@
-import pluralize from "pluralize";
 import { AppContext, Entity } from "../../../types";
 
 export const DBContextCode = (entities: Entity[], context: AppContext) => {
@@ -22,8 +21,7 @@ public class ${context.dbContextName} : DbContext
 
 ${entities
   .map(
-    (entity) =>
-      `  public DbSet<${entity.name}> ${pluralize(entity.name)} { get; set; }`
+    (entity) => `  public DbSet<${entity.name}> ${entity.plural} { get; set; }`
   )
   .join("\n")}
 }
