@@ -1,17 +1,10 @@
 import { CodeGenerator, Entity, AppContext, Scaffolder } from "./types";
 
 export class TsScaffolder implements Scaffolder {
-  private context: AppContext;
   private generators: CodeGenerator[] = [];
   private entities: Entity[] = [];
 
-  constructor(context?: AppContext) {
-    this.context = context ?? {
-      basePath: "./",
-      dbContextName: "AppDbContext",
-      projectName: "TestProject",
-    };
-  }
+  constructor(private context: AppContext) {}
 
   public addGenerator(generator: CodeGenerator) {
     this.generators.push(generator);
