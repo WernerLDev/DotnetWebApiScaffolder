@@ -1,5 +1,4 @@
-import pluralize from "pluralize";
-import { ColumnTypes, Entity, AppContext } from "./types";
+import { ColumnTypes, AppContext } from "./types";
 import * as fs from "fs";
 
 export const CSharpTypesMap: Map<ColumnTypes, string> = new Map([
@@ -17,40 +16,6 @@ export const TypeScriptTypesMap: Map<ColumnTypes, string> = new Map([
   ["boolean", "boolean"],
   ["password", "string"],
 ]);
-
-export const EntitySubstitutions = (entity: Entity): [string, string][] => {
-  return [
-    ["ENTITY_NAME", entity.name],
-    ["ENTITY_NAME_PLURAL", pluralize(entity.name)],
-  ];
-};
-
-export const ContextSubstitutions = (meta: AppContext): [string, string][] => {
-  return [
-    ["PROJECTNAME", meta.projectName],
-    ["DBCONTEXT_NAME", meta.dbContextName],
-  ];
-};
-
-export const GenerateCode = (params: {
-  template: string;
-  substitutions: Map<string, string>;
-}) => {
-  return new Promise<string>((resolve, reject) => {
-    fs.readFile(params.template, (error, data) => {
-      if (error) {
-        reject(`Failed to read template ${params.template}`);
-      }
-
-      let code = data.toString();
-      params.substitutions.forEach((value, key) => {
-        code = code.replaceAll(`##${key}##`, value);
-      });
-
-      resolve(code);
-    });
-  });
-};
 
 export const WriteCodeToFile = (
   path: string,
