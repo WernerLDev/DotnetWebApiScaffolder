@@ -1,28 +1,12 @@
 import { Entity, AppContext } from "../../../types";
-import {
-  GenerateCode,
-  ContextSubstitutions,
-  WriteCodeToFile,
-} from "../../../utils";
+import { WriteCodeToFile } from "../../../utils";
+import { ServiceExtensionCode } from "./ServiceExtensionCode";
 
 export const ServiceExtensionGenerator = async (
   entities: Entity[],
   context: AppContext
 ) => {
-  const Repositories = entities
-    .map((entity) => {
-      return `    services.AddScoped<${entity.name}Repository>();`;
-    })
-    .join("\n");
-
-  const code = await GenerateCode({
-    template: `${__dirname}/ServiceExtension.txt`,
-    substitutions: new Map([
-      ["REPOSITORIES", Repositories],
-      ...ContextSubstitutions(context),
-    ]),
-  });
-
+  const code = ServiceExtensionCode(entities, context);
   WriteCodeToFile(
     `Extensions/${context.projectName}Extension.cs`,
     code,

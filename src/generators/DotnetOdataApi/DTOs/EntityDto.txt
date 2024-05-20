@@ -1,6 +1,0 @@
-namespace ##PROJECTNAME##.Models.Dtos;
-
-public class ##ENTITY_NAME##Dto
-{
-##MODEL_FIELDS##
-}

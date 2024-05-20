@@ -1,25 +1,11 @@
 import { Entity, AppContext } from "../../../types";
-import {
-  GenerateCode,
-  ContextSubstitutions,
-  WriteCodeToFile,
-} from "../../../utils";
+import { WriteCodeToFile } from "../../../utils";
+import { OdataModelCode } from "./OdataModelCode";
 
-const GenDbSet = (entity: Entity) => {
-  return `      modelBuilder.EntitySet<${entity.name}>("${entity.name}");`;
-};
-
-export const OdataModelBuilderGenerator = async (
-  entity: Entity[],
-  meta: AppContext
+export const OdataModelBuilderGenerator = (
+  entities: Entity[],
+  context: AppContext
 ) => {
-  const code = await GenerateCode({
-    template: `${__dirname}/OdataModelBuilder.txt`,
-    substitutions: new Map([
-      ["ENTITY_SETS", entity.map((e) => GenDbSet(e)).join("\n")],
-      ...ContextSubstitutions(meta),
-    ]),
-  });
-
-  WriteCodeToFile(`Data/OdataModel.cs`, code, meta);
+  const code = OdataModelCode(entities, context);
+  WriteCodeToFile(`Data/OdataModel.cs`, code, context);
 };
