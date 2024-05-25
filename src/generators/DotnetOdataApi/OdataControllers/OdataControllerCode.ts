@@ -65,6 +65,5 @@ public class ${entity.name}Controller : ODataController
   }
 
 }
-
-  `;
+`;
 };

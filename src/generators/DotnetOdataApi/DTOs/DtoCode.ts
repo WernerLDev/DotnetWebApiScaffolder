@@ -9,5 +9,5 @@ public class ${entity.name}Dto
 {
 ${entity.columns.map((c) => GenModelProperty(c)).join("\n")}
 }
-  `;
+`;
 };
