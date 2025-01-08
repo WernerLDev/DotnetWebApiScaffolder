@@ -2,6 +2,7 @@ import { AppContext, Entity } from "../../../types";
 
 export const RepositoryCode = (entity: Entity, context: AppContext) => {
   return `
+using Microsoft.AspNetCore.OData.Deltas;
 using ${context.projectName}.Data;
 using ${context.projectName}.Models;
 using ${context.projectName}.Models.Dtos;
@@ -16,6 +17,11 @@ public class ${entity.name}Repository
   public ${entity.name}Repository(${context.dbContextName} dbContext)
   {
     _dbContext = dbContext;
+  }
+
+  public async Task<${entity.name}?> FindById(int key)
+  {
+    return await _dbContext.${entity.plural}.FindAsync(key);
   }
   
   public async Task<${entity.name}> Create(${entity.name}Dto dto)
@@ -33,23 +39,14 @@ ${entity.columns
     return entity;
   }
   
-  public async Task<${entity.name}> Update(${entity.name}Dto dto, int id)
+  public async Task<${entity.name}> Patch(Delta<${entity.name}> delta, ${
+    entity.name
+  } entity)
   {
-    var dbEntity = _dbContext.${entity.plural}.SingleOrDefault(x => x.Id == id);
-    if (dbEntity == null)
-    {
-      throw new Exception($"No ${entity.name} found with ID {id}");
-    }
-      
-    dbEntity.UpdatedAt = DateTime.Now;
-${entity.columns
-  .map((column) => `    dbEntity.${column.name} = dto.${column.name};`)
-  .join("\n")}
-  
-    _dbContext.${entity.plural}.Update(dbEntity);
+    delta.Patch(entity);
+    entity.UpdatedAt = DateTime.Now;
     await _dbContext.SaveChangesAsync();
-  
-    return dbEntity;
+    return entity;
   }
   
   public async Task Delete(int id)

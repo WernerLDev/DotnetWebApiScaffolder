@@ -3,9 +3,9 @@ import { AppContext, Entity } from "../../../types";
 export const OdataControllerCode = (entity: Entity, context: AppContext) => {
   return `
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using ${context.projectName}.Data;
 using ${context.projectName}.Models;
@@ -13,14 +13,13 @@ using ${context.projectName}.Models.Dtos;
 
 namespace ${context.projectName}.Controllers.Api;
 
-[Route("/odata/${entity.name}")]
-public class ${entity.name}Controller : ODataController
+public class ${entity.plural}Controller : ODataController
 {
 
   private readonly ${context.dbContextName} _dbContext;
   private readonly ${entity.name}Repository _repo;
 
-  public ${entity.name}Controller(${context.dbContextName} dbContext, ${entity.name}Repository repo)
+  public ${entity.plural}Controller(${context.dbContextName} dbContext, ${entity.name}Repository repo)
   {
     _dbContext = dbContext;
     _repo = repo;
@@ -32,36 +31,48 @@ public class ${entity.name}Controller : ODataController
     return Ok(_dbContext.${entity.plural});
   }
 
-  public ActionResult<${entity.name}> Get${entity.name}([FromODataUri] int key)
+  [EnableQuery]
+  public ActionResult<${entity.name}> Get([FromODataUri] int key)
   {
-    return _dbContext.${entity.plural}.Single(x => x.Id == key);
+    var dbEntity = _dbContext.${entity.plural}.SingleOrDefault(x => x.Id == key);
+
+    if(dbEntity == null) 
+    {
+      return NotFound();
+    }
+
+    return Ok(dbEntity);
   }
 
   [HttpPost]
-  public async Task<ActionResult<${entity.name}>> Create([FromBody] ${entity.name}Dto entity)
+  public async Task<ActionResult<${entity.name}>> Post([FromBody] ${entity.name}Dto entity)
   {
-    return Ok(await _repo.Create(entity));
+    return Created(await _repo.Create(entity));
   }
 
-  [HttpPut("{id}")]
-  public async Task<ActionResult<${entity.name}>> Update([FromBody] ${entity.name}Dto entity, [FromRoute] int id)
+  [HttpPatch]
+  public async Task<ActionResult<${entity.name}>> Patch([FromODataUri] int key, [FromBody] Delta<${entity.name}> entity)
   {
-    try {
-      return Ok(await _repo.Update(entity, id));
-    } catch(Exception e) {
-      return BadRequest(e.Message);
+    var dbEntity = await _repo.FindById(key);
+    if (dbEntity == null)
+    {
+      return NotFound();
     }
+
+    return Ok(await _repo.Patch(entity, dbEntity));
   }
 
-  [HttpDelete("{id}")]
-  public async Task<IActionResult> Delete([FromRoute] int id)
+  [HttpDelete]
+  public async Task<IActionResult> Delete([FromODataUri] int key)
   {
-    try {
-      await _repo.Delete(id);
-      return Ok();
-    } catch(Exception e) {
-      return BadRequest(e.Message);
+    var dbEntity = await _repo.FindById(key);
+    if (dbEntity != null)
+    {
+      await _repo.Delete(key);
+      
     }
+
+    return NoContent();
   }
 
 }

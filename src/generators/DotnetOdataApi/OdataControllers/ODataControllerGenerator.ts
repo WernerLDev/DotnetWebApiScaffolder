@@ -7,7 +7,7 @@ export const OdataGenerator = (entities: Entity[], context: AppContext) => {
     const code = OdataControllerCode(entity, context);
 
     WriteCodeToFile(
-      `Controllers/Api/${entity.name}Controller.cs`,
+      `Controllers/Api/${entity.plural}Controller.cs`,
       code,
       context
     );

@@ -16,7 +16,8 @@ public class OdataModel
 
 ${entities
   .map(
-    (entity) => `    modelBuilder.EntitySet<${entity.name}>("${entity.name}");`
+    (entity) =>
+      `    modelBuilder.EntitySet<${entity.name}>("${entity.plural}");`
   )
   .join("\n")}
 
