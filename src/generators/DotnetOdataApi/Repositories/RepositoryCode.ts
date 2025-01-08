@@ -19,6 +19,10 @@ public class ${entity.name}Repository
     _dbContext = dbContext;
   }
 
+  public IQueryable All() {
+    return _dbContext.${entity.plural};
+  }
+
   public async Task<${entity.name}?> FindById(int key)
   {
     return await _dbContext.${entity.plural}.FindAsync(key);

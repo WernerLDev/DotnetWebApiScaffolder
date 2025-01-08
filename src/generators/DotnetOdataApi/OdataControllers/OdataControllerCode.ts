@@ -15,26 +15,23 @@ namespace ${context.projectName}.Controllers.Api;
 
 public class ${entity.plural}Controller : ODataController
 {
-
-  private readonly ${context.dbContextName} _dbContext;
   private readonly ${entity.name}Repository _repo;
 
-  public ${entity.plural}Controller(${context.dbContextName} dbContext, ${entity.name}Repository repo)
+  public ${entity.plural}Controller(${entity.name}Repository repo)
   {
-    _dbContext = dbContext;
     _repo = repo;
   }
 
   [EnableQuery]
   public ActionResult<IEnumerable<${entity.name}>> Get()
   {
-    return Ok(_dbContext.${entity.plural});
+    return Ok(_repo.All());
   }
 
   [EnableQuery]
-  public ActionResult<${entity.name}> Get([FromODataUri] int key)
+  public async Task<ActionResult<${entity.name}>> Get([FromODataUri] int key)
   {
-    var dbEntity = _dbContext.${entity.plural}.SingleOrDefault(x => x.Id == key);
+    var dbEntity = await _repo.FindById(key);
 
     if(dbEntity == null) 
     {
