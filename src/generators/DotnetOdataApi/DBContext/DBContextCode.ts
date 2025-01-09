@@ -7,23 +7,47 @@ using ${context.projectName}.Models;
 
 namespace ${context.projectName}.Data;
 
-public class ${context.dbContextName} : DbContext
-{
-  public ${context.dbContextName} (DbContextOptions <${
+public class ${context.dbContextName}(DbContextOptions<${
     context.dbContextName
-  }> options)
-          : base(options)
-    { }
+  }> options) : DbContext(options)
+{
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
+    ${generateManyToManyRelation(entities)}
   }
 
 ${entities
   .map(
-    (entity) => `  public DbSet<${entity.name}> ${entity.plural} { get; set; }`
+    (entity) =>
+      `  public required DbSet<${entity.name}> ${entity.plural} { get; set; }`
   )
   .join("\n")}
 }
 `;
+};
+
+const generateManyToManyRelation = (entities: Entity[]) => {
+  const relations: String[] = [];
+
+  entities.forEach((entity) => {
+    entity.relations
+      ?.filter((x) => x.kind === "manyToMany")
+      .forEach((relation) => {
+        const targetEntity = entities.find((x) => x.name === relation.target);
+        if (targetEntity == null)
+          throw new Error(
+            `No target entity found with name ${relation.target}`
+          );
+
+        relations.push(`
+    modelBuilder.Entity<${entity.name}>()
+      .HasMany(e => e.${targetEntity.plural})
+      .WithMany(e => e.${entity.plural})
+      .UsingEntity<${entity.name}${targetEntity.name}>();
+          `);
+      });
+  });
+
+  return relations.join("\n");
 };

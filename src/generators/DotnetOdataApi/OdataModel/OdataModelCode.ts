@@ -15,6 +15,11 @@ public class OdataModel
     var modelBuilder = new ODataConventionModelBuilder();
 
 ${entities
+  .filter((x) => x.kind === "Relation")
+  .map((entity) => `    modelBuilder.EntityType<${entity.name}>();`)}
+
+${entities
+  .filter((x) => x.kind === "Set")
   .map(
     (entity) =>
       `    modelBuilder.EntitySet<${entity.name}>("${entity.plural}");`

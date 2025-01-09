@@ -7,7 +7,7 @@ import { CSharpTypesMap } from "../../../utils";
  */
 export const GenModelProperty = (column: Column) => {
   if (column.type === "string") {
-    return `  public string ${column.name} { get; set; } = "";`;
+    return `  public string ${column.name} { get; set; } = String.Empty;`;
   }
   return `  public ${CSharpTypesMap.get(column.type)} ${
     column.name
@@ -21,14 +21,17 @@ const GenRelations = (entity: Entity) => {
   let relations: string[] = [];
 
   entity.relations?.forEach((relation) => {
-    if (relation.has === "one") {
+    if (relation.kind === "oneToOne") {
       relations.push(
         `  public ${relation.target}? ${relation.target} { get; set; }`
       );
-    } else if (relation.has === "many") {
+    } else if (
+      relation.kind === "oneToMany" ||
+      relation.kind === "manyToMany"
+    ) {
       const plural = pluralize(relation.target);
       relations.push(
-        `  public ICollection<${relation.target}> ${plural} { get; set; } = new List<${relation.target}>();`
+        `  public ICollection<${relation.target}> ${plural} { get; set; } = [];`
       );
     }
   });
@@ -46,9 +49,20 @@ const GenReverseRelations = (entity: Entity, entities: Entity[]) => {
     if (otherEntity.name !== entity.name) {
       otherEntity.relations?.forEach((relation) => {
         if (relation.target === entity.name) {
-          relations.push(
-            `  public ${otherEntity.name}? ${otherEntity.name} {get; set; }`
-          );
+          switch (relation.kind) {
+            case "oneToOne":
+            case "oneToMany":
+              relations.push(
+                `  public ${otherEntity.name}? ${otherEntity.name} {get; set; }`
+              );
+              break;
+            case "manyToMany":
+              const plural = pluralize(otherEntity.name);
+              relations.push(
+                `  public ICollection<${otherEntity.name}> ${plural} { get; set; } = [];`
+              );
+              break;
+          }
         }
       });
     }
@@ -68,9 +82,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ${context.projectName}.Models;
 
 public class ${entity.name}
-{
-  public int Id { get; set; }
-  
+{  
 ${entity.columns.map((e) => GenModelProperty(e)).join("\n")}
 ${GenRelations(entity).join("\n")}
 ${GenReverseRelations(entity, allEntities).join("\n")}

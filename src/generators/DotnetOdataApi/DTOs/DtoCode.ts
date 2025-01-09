@@ -7,7 +7,10 @@ namespace ${context.projectName}.Models.Dtos;
 
 public class ${entity.name}Dto
 {
-${entity.columns.map((c) => GenModelProperty(c)).join("\n")}
+${entity.columns
+  .filter((x) => x.name !== "Id")
+  .map((c) => GenModelProperty(c))
+  .join("\n")}
 }
 `;
 };

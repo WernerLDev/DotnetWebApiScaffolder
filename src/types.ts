@@ -20,13 +20,14 @@ export type Entity = {
   name: string;
   plural: string;
   columns: Column[];
+  kind: "Set" | "Relation";
   relations?: {
     target: string;
-    has: "one" | "many";
+    kind: "oneToOne" | "oneToMany" | "manyToMany";
   }[];
 };
 
-export type EntityWithoutPlural = Omit<Entity, "plural">;
+export type EntityWithoutPlural = Omit<Entity, "plural" | "kind">;
 
 export type CodeGenerator = (entities: Entity[], metaData: AppContext) => void;
 
