@@ -9,7 +9,7 @@ export const RepositoryGenerator = async (
   entities.forEach(async (entity) => {
     const code = RepositoryCode(entity, context);
 
-    WriteCodeToFile(
+    await WriteCodeToFile(
       `Data/Repositories/${entity.name}Repository.cs`,
       code,
       context

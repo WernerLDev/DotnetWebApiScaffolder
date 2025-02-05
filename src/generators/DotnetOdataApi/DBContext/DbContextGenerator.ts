@@ -8,5 +8,5 @@ export const DbContextGenerator = async (
   context: AppContext
 ) => {
   const code = DBContextCode(entities, context);
-  WriteCodeToFile(`Data/${context.dbContextName}.cs`, code, context);
+  await WriteCodeToFile(`Data/${context.dbContextName}.cs`, code, context);
 };

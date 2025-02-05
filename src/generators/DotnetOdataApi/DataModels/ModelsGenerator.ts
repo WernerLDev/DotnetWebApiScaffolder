@@ -8,6 +8,10 @@ export const ModelsGenerator = async (
 ) => {
   entities.forEach(async (entity) => {
     const generated = DataModelCode(entity, entities, context);
-    WriteCodeToFile(`Models/Entities/${entity.name}.cs`, generated, context);
+    await WriteCodeToFile(
+      `Data/Models/Entities/${entity.name}.cs`,
+      generated,
+      context
+    );
   });
 };

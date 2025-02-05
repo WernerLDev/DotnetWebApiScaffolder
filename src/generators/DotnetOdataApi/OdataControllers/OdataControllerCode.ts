@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using ${context.projectName}.Data;
 using ${context.projectName}.Models;
 using ${context.projectName}.Models.Dtos;
 
@@ -36,40 +36,41 @@ public class ${entity.plural}Controller(${
 
 const OdataSetMethods = (entity: Entity) => `
   [EnableQuery]
-  public async Task<ActionResult<${entity.name}>> Get([FromODataUri] int key)
+  public SingleResult<${entity.name}> Get([FromODataUri] int key)
   {
-    var dbEntity = await repo.FindById(key);
-
-    if(dbEntity == null) 
-    {
-      return NotFound();
-    }
-
-    return Ok(dbEntity);
+    return SingleResult.Create(repo.FindById(key));
   }
 
   [HttpPost]
   public async Task<ActionResult<${entity.name}>> Post([FromBody] ${entity.name}Dto entity)
   {
+    if (!ModelState.IsValid)
+    {
+        return BadRequest(ModelState);
+    }
     return Created(await repo.Create(entity));
   }
 
   [HttpPatch]
   public async Task<ActionResult<${entity.name}>> Patch([FromODataUri] int key, [FromBody] Delta<${entity.name}> entity)
   {
-    var dbEntity = await repo.FindById(key);
+    if (!ModelState.IsValid)
+    {
+        return BadRequest(ModelState);
+    }
+    var dbEntity = repo.FindById(key).FirstOrDefault();
     if (dbEntity == null)
     {
       return NotFound();
     }
 
-    return Ok(await repo.Patch(entity, dbEntity));
+    return Ok(await repo.Update(entity.Patch(dbEntity)));
   }
 
   [HttpDelete]
   public async Task<IActionResult> Delete([FromODataUri] int key)
   {
-    var dbEntity = await repo.FindById(key);
+    var dbEntity = repo.FindById(key).FirstOrDefault();
     if (dbEntity != null)
     {
       await repo.Delete(key);

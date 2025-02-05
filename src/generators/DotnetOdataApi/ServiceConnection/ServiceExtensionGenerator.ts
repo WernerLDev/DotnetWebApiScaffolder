@@ -7,8 +7,8 @@ export const ServiceExtensionGenerator = async (
   context: AppContext
 ) => {
   const code = ServiceExtensionCode(entities, context);
-  WriteCodeToFile(
-    `Extensions/${context.projectName}Extension.cs`,
+  await WriteCodeToFile(
+    `WebApi/Extensions/${context.projectName}Extension.cs`,
     code,
     context
   );

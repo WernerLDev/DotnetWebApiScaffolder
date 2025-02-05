@@ -6,12 +6,16 @@ import { CSharpTypesMap } from "../../../utils";
  * Class property for a single entity column
  */
 export const GenModelProperty = (column: Column) => {
+  let outStr = "";
+
   if (column.type === "string") {
-    return `  public string ${column.name} { get; set; } = String.Empty;`;
+    outStr += `  public string ${column.name} { get; set; } = String.Empty;`;
+  } else {
+    outStr += `  public ${CSharpTypesMap.get(column.type)} ${
+      column.name
+    } { get; set; }`;
   }
-  return `  public ${CSharpTypesMap.get(column.type)} ${
-    column.name
-  } { get; set; }`;
+  return outStr;
 };
 
 /*
@@ -76,11 +80,15 @@ export const DataModelCode = (
   allEntities: Entity[],
   context: AppContext
 ) => {
-  return `
-using System.ComponentModel.DataAnnotations.Schema;
-  
+  return `using System.ComponentModel.DataAnnotations.Schema;
+${entity.relations ? "using Microsoft.EntityFrameworkCore;" : ""}  
 namespace ${context.projectName}.Models;
 
+${
+  entity.kind === "Relation"
+    ? `[PrimaryKey(nameof(${entity.columns[0].name}), nameof(${entity.columns[1].name}))]`
+    : ""
+}
 public class ${entity.name}
 {  
 ${entity.columns.map((e) => GenModelProperty(e)).join("\n")}

@@ -8,6 +8,10 @@ export const DtosGenerator = async (
 ) => {
   entities.forEach(async (entity) => {
     const code = DtoCode(entity, context);
-    WriteCodeToFile(`Models/Dtos/${entity.name}Dto.cs`, code, context);
+    await WriteCodeToFile(
+      `Data/Models/Dtos/${entity.name}Dto.cs`,
+      code,
+      context
+    );
   });
 };

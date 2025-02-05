@@ -6,7 +6,7 @@ export const ServiceExtensionCode = (
 ) => {
   return `
 using Microsoft.AspNetCore.OData;
-using ${context.projectName}.Data;
+using ${context.projectName}.WebApi;
 
 namespace ${context.projectName};
 

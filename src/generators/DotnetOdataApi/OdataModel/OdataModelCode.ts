@@ -5,7 +5,7 @@ export const OdataModelCode = (entities: Entity[], context: AppContext) => {
 using Microsoft.OData.ModelBuilder;
 using ${context.projectName}.Models;
 
-namespace ${context.projectName}.Data;
+namespace ${context.projectName}.WebApi;
 
 public class OdataModel
 {
@@ -16,7 +16,11 @@ public class OdataModel
 
 ${entities
   .filter((x) => x.kind === "Relation")
-  .map((entity) => `    modelBuilder.EntityType<${entity.name}>();`)}
+  .map(
+    (entity) =>
+      `    modelBuilder.EntityType<${entity.name}>()
+      .HasKey(c => new { c.${entity.columns[0].name}, c.${entity.columns[1].name} });`
+  )}
 
 ${entities
   .filter((x) => x.kind === "Set")

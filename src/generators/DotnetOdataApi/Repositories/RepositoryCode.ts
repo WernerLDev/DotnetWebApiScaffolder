@@ -2,7 +2,6 @@ import { AppContext, Entity } from "../../../types";
 
 export const RepositoryCode = (entity: Entity, context: AppContext) => {
   return `
-using Microsoft.AspNetCore.OData.Deltas;
 using ${context.projectName}.Data;
 using ${context.projectName}.Models;
 using ${context.projectName}.Models.Dtos;
@@ -24,9 +23,9 @@ public class ${entity.name}Repository(${context.dbContextName} dbContext)
 };
 
 const RepoSetMethods = (entity: Entity) => `
-  public async Task<${entity.name}?> FindById(int key)
+  public IQueryable<${entity.name}> FindById(int key)
   {
-    return await dbContext.${entity.plural}.FindAsync(key);
+    return dbContext.${entity.plural}.Where(x => x.Id.Equals(key));
   }
   
   public async Task<${entity.name}> Create(${entity.name}Dto dto)
@@ -45,11 +44,8 @@ ${entity.columns
     return entity;
   }
   
-  public async Task<${entity.name}> Patch(Delta<${entity.name}> delta, ${
-  entity.name
-} entity)
+  public async Task<${entity.name}> Update(${entity.name} entity)
   {
-    delta.Patch(entity);
     entity.UpdatedAt = DateTime.Now;
     await dbContext.SaveChangesAsync();
     return entity;

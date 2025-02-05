@@ -7,10 +7,23 @@ using ${context.projectName}.Models;
 
 namespace ${context.projectName}.Data;
 
-public class ${context.dbContextName}(DbContextOptions<${
-    context.dbContextName
-  }> options) : DbContext(options)
+public class ${context.dbContextName} : DbContext
 {
+  public ${context.dbContextName}()
+  {
+  }
+
+  public ${context.dbContextName}(DbContextOptions options) : base(options)
+  {
+  }
+
+  protected override void OnConfiguring(DbContextOptionsBuilder options)
+  {
+    if (!options.IsConfigured)
+    {
+      options.UseSqlite($"Data Source=data.db");
+    }
+  }
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

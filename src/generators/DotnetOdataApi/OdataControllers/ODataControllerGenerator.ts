@@ -6,8 +6,8 @@ export const OdataGenerator = (entities: Entity[], context: AppContext) => {
   entities.forEach(async (entity) => {
     const code = OdataControllerCode(entity, context);
 
-    WriteCodeToFile(
-      `Controllers/Api/${entity.plural}Controller.cs`,
+    await WriteCodeToFile(
+      `WebApi/Controllers/Api/${entity.plural}Controller.cs`,
       code,
       context
     );

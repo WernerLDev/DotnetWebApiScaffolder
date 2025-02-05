@@ -2,10 +2,10 @@ import { Entity, AppContext } from "../../../types";
 import { WriteCodeToFile } from "../../../utils";
 import { OdataModelCode } from "./OdataModelCode";
 
-export const OdataModelBuilderGenerator = (
+export const OdataModelBuilderGenerator = async (
   entities: Entity[],
   context: AppContext
 ) => {
   const code = OdataModelCode(entities, context);
-  WriteCodeToFile(`Data/OdataModel.cs`, code, context);
+  await WriteCodeToFile(`WebApi/OdataModel.cs`, code, context);
 };
