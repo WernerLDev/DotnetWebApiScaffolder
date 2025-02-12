@@ -6,16 +6,17 @@ import { CSharpTypesMap } from "../../../utils";
  * Class property for a single entity column
  */
 export const GenModelProperty = (column: Column) => {
-  let outStr = "";
-
-  if (column.type === "string") {
-    outStr += `  public string ${column.name} { get; set; } = String.Empty;`;
-  } else {
-    outStr += `  public ${CSharpTypesMap.get(column.type)} ${
-      column.name
-    } { get; set; }`;
+  switch (column.type) {
+    case "string":
+      return `  public string ${column.name} { get; set; } = String.Empty;`;
+    case "boolean":
+    case "datetime":
+    case "number":
+    case "password":
+      return `  public ${CSharpTypesMap.get(column.type)} ${
+        column.name
+      } { get; set; }`;
   }
-  return outStr;
 };
 
 /*

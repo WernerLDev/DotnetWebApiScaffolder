@@ -41,7 +41,7 @@ dotnet new sln
 dotnet new classlib --name=Data
 dotnet sln add Data
 
-dotnet new webapi --name=WebApi -lang "$lang"
+dotnet new mvc --name=WebApi -lang "$lang"
 dotnet sln add WebApi
 
 dotnet new xunit --name=WebApi.Tests -lang "$lang"
